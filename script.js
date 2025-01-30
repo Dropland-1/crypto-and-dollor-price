@@ -1,4 +1,4 @@
-const apiUrl = 'https://your-app.herokuapp.com/prices'; // آدرس API بک‌اند
+const apiUrl = 'https://hadiapex.pythonanywhere.com'; // آدرس API بک‌اند
 
 let previousPrices = {
     dollor: null,
