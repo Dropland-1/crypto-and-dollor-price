@@ -14,21 +14,22 @@ async function fetchPrices() {
 }
 
 function updatePriceElement(element, currentPrice, previousPrice, currencyName) {
+    const price = Math.round(currentPrice); // حذف اعشار و گرد کردن قیمت
     if (previousPrice !== null) {
-        if (currentPrice > previousPrice) {
-            element.innerHTML = `قیمت ${currencyName}: ${currentPrice.toLocaleString()} تومان <span class="green">(▲)</span>`;
+        if (price > previousPrice) {
+            element.innerHTML = `قیمت ${currencyName}: ${price.toLocaleString()} تومان <span class="green">(▲)</span>`;
             element.classList.remove('red');
             element.classList.add('green');
-        } else if (currentPrice < previousPrice) {
-            element.innerHTML = `قیمت ${currencyName}: ${currentPrice.toLocaleString()} تومان <span class="red">(▼)</span>`;
+        } else if (price < previousPrice) {
+            element.innerHTML = `قیمت ${currencyName}: ${price.toLocaleString()} تومان <span class="red">(▼)</span>`;
             element.classList.remove('green');
             element.classList.add('red');
         } else {
-            element.innerHTML = `قیمت ${currencyName}: ${currentPrice.toLocaleString()} تومان`;
+            element.innerHTML = `قیمت ${currencyName}: ${price.toLocaleString()} تومان`;
             element.classList.remove('green', 'red');
         }
     } else {
-        element.innerHTML = `قیمت ${currencyName}: ${currentPrice.toLocaleString()} تومان`;
+        element.innerHTML = `قیمت ${currencyName}: ${price.toLocaleString()} تومان`;
         element.classList.remove('green', 'red');
     }
 }
