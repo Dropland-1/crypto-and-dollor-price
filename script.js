@@ -8,12 +8,26 @@ let previousPrices = {
 };
 
 async function fetchPrices() {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    return data;
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('خطا در دریافت داده‌ها');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("خطا در دریافت قیمت‌ها:", error);
+        return null;
+    }
 }
 
 function updatePriceElement(element, currentPrice, previousPrice, currencyName) {
+    if (currentPrice === null) {
+        element.innerHTML = `قیمت ${currencyName}: خطا در دریافت داده‌ها`;
+        element.classList.remove('green', 'red');
+        return;
+    }
+
     const price = Math.round(currentPrice); // حذف اعشار و گرد کردن قیمت
     if (previousPrice !== null) {
         if (price > previousPrice) {
@@ -35,26 +49,25 @@ function updatePriceElement(element, currentPrice, previousPrice, currencyName) 
 }
 
 async function updatePrices() {
-    try {
-        const prices = await fetchPrices();
-
-        const dollorElement = document.getElementById('dollor-price');
-        const notcoinElement = document.getElementById('notcoin-price');
-        const toncoinElement = document.getElementById('toncoin-price');
-        const bitcoinElement = document.getElementById('bitcoin-price');
-
-        updatePriceElement(dollorElement, prices.dollor, previousPrices.dollor, 'دلار');
-        updatePriceElement(notcoinElement, prices.notcoin, previousPrices.notcoin, 'نات کوین');
-        updatePriceElement(toncoinElement, prices.toncoin, previousPrices.toncoin, 'تون کوین');
-        updatePriceElement(bitcoinElement, prices.bitcoin, previousPrices.bitcoin, 'بیت کوین');
-
-        previousPrices.dollor = prices.dollor;
-        previousPrices.notcoin = prices.notcoin;
-        previousPrices.toncoin = prices.toncoin;
-        previousPrices.bitcoin = prices.bitcoin;
-    } catch (error) {
-        console.error("خطا در دریافت قیمت‌ها:", error);
+    const prices = await fetchPrices();
+    if (prices === null) {
+        return; // اگر داده‌ها دریافت نشدند، ادامه نده
     }
+
+    const dollorElement = document.getElementById('dollor-price');
+    const notcoinElement = document.getElementById('notcoin-price');
+    const toncoinElement = document.getElementById('toncoin-price');
+    const bitcoinElement = document.getElementById('bitcoin-price');
+
+    updatePriceElement(dollorElement, prices.dollor, previousPrices.dollor, 'دلار');
+    updatePriceElement(notcoinElement, prices.notcoin, previousPrices.notcoin, 'نات کوین');
+    updatePriceElement(toncoinElement, prices.toncoin, previousPrices.toncoin, 'تون کوین');
+    updatePriceElement(bitcoinElement, prices.bitcoin, previousPrices.bitcoin, 'بیت کوین');
+
+    previousPrices.dollor = prices.dollor;
+    previousPrices.notcoin = prices.notcoin;
+    previousPrices.toncoin = prices.toncoin;
+    previousPrices.bitcoin = prices.bitcoin;
 }
 
 function startTimer(seconds) {
